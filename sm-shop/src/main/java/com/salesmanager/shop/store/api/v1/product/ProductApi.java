@@ -182,7 +182,7 @@ public class ProductApi {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/products", method = RequestMethod.GET)
+	@RequestMapping(value = {"/products", "/private/products"}, method = RequestMethod.GET)
 	@ResponseBody
 	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
 			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
@@ -301,8 +301,7 @@ public class ProductApi {
 	 *                   <p>
 	 *                   /api/product/123
 	 */
-    /**
-	@RequestMapping(value = {"/product/{id}","/products/{id}"}, method = RequestMethod.GET)
+	@RequestMapping(value = {"/product/{id:\\d+}", "/private/product/{id:\\d+}"}, method = RequestMethod.GET)
 	@ApiOperation(httpMethod = "GET", value = "Get a product by id", notes = "For administration and shop purpose. Specifying ?merchant is required otherwise it falls back to DEFAULT")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Single product found", response = ReadableProduct.class) })
@@ -312,7 +311,10 @@ public class ProductApi {
 	public ReadableProduct get(@PathVariable final Long id, @RequestParam(value = "lang", required = false) String lang,
 			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language, HttpServletResponse response)
 			throws Exception {
-		ReadableProduct product = productCommonFacade.getProduct(merchantStore, id, language);
+		// Handle case where language is null (e.g., when lang=_all is sent from admin panel)
+		Language resolvedLanguage = language != null ? language : merchantStore.getDefaultLanguage();
+
+		ReadableProduct product = productCommonFacade.getProduct(merchantStore, id, resolvedLanguage);
 
 		if (product == null) {
 			response.sendError(404, "Product not fount for id " + id);
@@ -321,7 +323,6 @@ public class ProductApi {
 
 		return product;
 	}
-	**/
 
 	/**
 	 * Price calculation
@@ -359,8 +360,7 @@ public class ProductApi {
 	 *                   <p>
 	 *                   /api/product/123
 	 */
-	@RequestMapping(value = { "/product/{friendlyUrl}",
-			"/product/friendly/{friendlyUrl}" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/product/friendly/{friendlyUrl}" }, method = RequestMethod.GET)
 	@ApiOperation(httpMethod = "GET", value = "Get a product by friendlyUrl (slug)", notes = "For administration and shop purpose. Specifying ?merchant is "
 			+ "required otherwise it falls back to DEFAULT")
 	@ApiResponses(value = {
@@ -371,7 +371,10 @@ public class ProductApi {
 	public ReadableProduct getByfriendlyUrl(@PathVariable final String friendlyUrl,
 			@RequestParam(value = "lang", required = false) String lang, @ApiIgnore MerchantStore merchantStore,
 			@ApiIgnore Language language, HttpServletResponse response) throws Exception {
-		ReadableProduct product = productFacade.getProductBySeUrl(merchantStore, friendlyUrl, language);
+		// Handle case where language is null (e.g., when lang=_all is sent from admin panel)
+		Language resolvedLanguage = language != null ? language : merchantStore.getDefaultLanguage();
+
+		ReadableProduct product = productFacade.getProductBySeUrl(merchantStore, friendlyUrl, resolvedLanguage);
 
 		if (product == null) {
 			response.sendError(404, "Product not fount for id " + friendlyUrl);

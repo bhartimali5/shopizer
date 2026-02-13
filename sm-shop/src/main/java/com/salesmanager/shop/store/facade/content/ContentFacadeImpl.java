@@ -626,12 +626,21 @@ public class ContentFacadeImpl implements ContentFacade {
 		try {
 			Content content = null;
 			ReadableContentBox box = new ReadableContentBox();
-			
+
+			LOGGER.debug("Fetching content box with code: {}, store: {}, language: {}",
+					code, store.getCode(), language != null ? language.getCode() : "null");
+
 			if(language != null) {
-				
+
 				content = 	Optional.ofNullable(contentService.getByCode(code, store, language))
-						.orElseThrow(() -> new ResourceNotFoundException(
-								"Resource not found [" + code + "] for store [" + store.getCode() + "]"));
+						.orElseThrow(() -> {
+							LOGGER.warn("Content box '{}' not found for store '{}' and language '{}'. " +
+									"This is optional CMS content (banners/messages). " +
+									"Create it via admin panel Content > Boxes, or ignore this warning.",
+									code, store.getCode(), language.getCode());
+							return new ResourceNotFoundException(
+									"Resource not found [" + code + "] for store [" + store.getCode() + "]");
+						});
 				
 				Optional<ContentDescription> contentDescription = findAppropriateContentDescription(
 						content.getDescriptions(), language);

@@ -143,12 +143,40 @@ public class ProductApiV2 {
 
 	}
 
+	@RequestMapping(value = { "/private/product/definition" }, method = RequestMethod.GET)
+	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
+	public @ResponseBody ReadableProductDefinition getProductDefinitionTemplate(
+			@ApiIgnore MerchantStore merchantStore,
+			@ApiIgnore Language language) {
+
+		// Return empty definition for create form
+		return new ReadableProductDefinition();
+
+	}
+
+	@ResponseStatus(HttpStatus.CREATED)
+	@PostMapping(value = { "/private/product/definition" })
+	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
+			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
+	public @ResponseBody Entity createProductDefinition(@Valid @RequestBody PersistableProductDefinition product,
+			@ApiIgnore MerchantStore merchantStore, @ApiIgnore Language language) {
+
+		// Create product via definition endpoint (for admin panel compatibility)
+		product.setId(null);
+		Long id = productDefinitionFacade.saveProductDefinition(merchantStore, product, language);
+		Entity returnEntity = new Entity();
+		returnEntity.setId(id);
+		return returnEntity;
+
+	}
+
 	@ResponseStatus(HttpStatus.OK)
 	@GetMapping(value = { "/private/product/{id}" })
 	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
 			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
 	public @ResponseBody ReadableProductDefinition getV2(
-			@PathVariable Long id, 
+			@PathVariable Long id,
 			@ApiIgnore MerchantStore merchantStore,
 			@ApiIgnore Language language) {
 
@@ -265,7 +293,7 @@ public class ProductApiV2 {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping(value = "/products", method = RequestMethod.GET)
+	@RequestMapping(value = {"/products", "/private/products"}, method = RequestMethod.GET)
 	@ResponseBody
 	@ApiImplicitParams({ @ApiImplicitParam(name = "store", dataType = "String", defaultValue = "DEFAULT"),
 			@ApiImplicitParam(name = "lang", dataType = "String", defaultValue = "en") })
