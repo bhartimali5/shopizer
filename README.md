@@ -78,18 +78,25 @@ Clone the repository:
 CI/CD Pipeline:
 -------------------
 
-The project uses **GitHub Actions** for continuous integration and deployment. The CI/CD pipeline automatically:
+The project uses **GitHub Actions** for continuous integration. The CI/CD pipeline automatically:
 
+- ✅ Validates Maven configuration and downloads dependencies
 - ✅ Runs all tests across modules
-- ✅ Generates JaCoCo code coverage reports
+- ✅ Generates JaCoCo code coverage reports (30% line, 37% branch coverage)
 - ✅ Performs SpotBugs static code analysis
-- ✅ Builds the application JAR artifact
-- ✅ Creates and pushes Docker images (on main/master branch)
+- ✅ Builds the application JAR artifact (`shopizer.jar`)
+- ✅ Uploads artifacts for download (JAR, test results, coverage reports)
 
 **Workflow triggers:**
 - Push to main, master, or develop branches
 - Pull requests to main or master
 - Manual workflow dispatch
+
+**Artifacts produced:**
+- `shopizer-jar` - Deployable Spring Boot JAR (~200MB)
+- `test-results` - JUnit test reports (XML)
+- `coverage-reports` - JaCoCo coverage analysis (HTML/XML)
+- `spotbugs-report` - Static code analysis results
 
 **View workflow status:** Check the [Actions tab](https://github.com/shopizer-ecommerce/shopizer/actions) or the badge above.
 
