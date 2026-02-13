@@ -8,6 +8,7 @@
 [![Official site](https://img.shields.io/website-up-down-green-red/https/shields.io.svg?label=official%20site)](http://www.shopizer.com/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/shopizerecomm/shopizer.svg)](https://hub.docker.com/r/shopizerecomm/shopizer)
 [![stackoverflow](https://img.shields.io/badge/shopizer-stackoverflow-orange.svg?style=flat)](http://stackoverflow.com/questions/tagged/shopizer)
+[![GitHub Actions](https://github.com/shopizer-ecommerce/shopizer/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/shopizer-ecommerce/shopizer/actions/workflows/ci-cd.yml)
 [![CircleCI](https://circleci.com/gh/shopizer-ecommerce/shopizer.svg?style=svg)](https://circleci.com/gh/shopizer-ecommerce/shopizer)
 
 
@@ -70,9 +71,27 @@ API documentation:
 Get the source code:
 -------------------
 Clone the repository:
-     
+
 	 $ git clone git://github.com/shopizer-ecommerce/shopizer.git
-	 
+
+
+CI/CD Pipeline:
+-------------------
+
+The project uses **GitHub Actions** for continuous integration and deployment. The CI/CD pipeline automatically:
+
+- ✅ Runs all tests across modules
+- ✅ Generates JaCoCo code coverage reports
+- ✅ Performs SpotBugs static code analysis
+- ✅ Builds the application JAR artifact
+- ✅ Creates and pushes Docker images (on main/master branch)
+
+**Workflow triggers:**
+- Push to main, master, or develop branches
+- Pull requests to main or master
+- Manual workflow dispatch
+
+**View workflow status:** Check the [Actions tab](https://github.com/shopizer-ecommerce/shopizer/actions) or the badge above.
 
 To build the application:
 -------------------
